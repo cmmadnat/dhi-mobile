@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Image } from "react-native";
 import {
   createSwitchNavigator,
   createAppContainer,
@@ -11,13 +11,20 @@ import AboutScreen from "./about-screen";
 function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text>I could be a login screen</Text>
-      <Button
-        title="Click to go to next page"
-        onPress={() => {
-          navigation.navigate("AppStack");
-        }}
+      <Image
+        source={require("./assets/logo.png")}
+        resizeMode={"center"}
+        style={styles.logo}
       />
+      <View style={{ flex: 3 }}>
+        
+        <Button
+          title="Click to go to next page"
+          onPress={() => {
+            navigation.navigate("AppStack");
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -55,5 +62,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  logo: {
+    flex: 1,
+    width: 212
   }
 });
