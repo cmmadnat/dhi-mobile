@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, FlatList, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  Text,
+  FlatList,
+  StatusBar,
+  View
+} from "react-native";
 import { Button, Icon, SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
 
@@ -12,6 +19,8 @@ import {
   searchPatient
 } from "../components/service/patient-service";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { BlurView } from "expo-blur";
+import { getHeaderInset } from "../components/header-inset";
 
 const HomeScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
@@ -39,7 +48,7 @@ const HomeScreen = ({ navigation }) => {
     );
   };
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
       <SearchBar
         lightTheme
         placeholder="Type Here..."
@@ -52,7 +61,7 @@ const HomeScreen = ({ navigation }) => {
         data={list}
         renderItem={renderItem}
       />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -68,7 +77,12 @@ const styles = StyleSheet.create({
 });
 HomeScreen.navigationOptions = ({ navigation }) => {
   return {
-    title: "เลือกคนไข้"
+    title: "เลือกคนไข้",
+    headerStyle: {
+      backgroundColor: "transparent"
+    },
+    headerTransparent: true,
+    headerBackground: <BlurView style={{ flex: 1 }} intensity={100} />
   };
 };
 
