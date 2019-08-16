@@ -18,7 +18,7 @@ export default class AppLoadingComponent extends React.Component<
     return (
       <LottieView
         ref={el => (this.lottie = el)}
-        source={require("../assets/528-spinner-loading.json")}
+        source={require("../assets/51-preloader.json")}
         style={{
           display: show ? "flex" : "none",
           width: 100,
