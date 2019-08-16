@@ -1,49 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList, SafeAreaView } from "react-native";
-import { Button, Icon } from "react-native-elements";
+import { Button, Icon, SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { getPatient, Patient } from "../components/service/patient-service";
-
-const list = [
-  {
-    name: "Amy Farha",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-    subtitle: "Vice President"
-  },
-  {
-    name: "Chris Jackson",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg",
-    subtitle: "Vice Chairman"
-  }
-];
-const list2 = [
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list,
-  ...list
-];
+import { debounce } from "lodash";
+import {
+  getPatient,
+  Patient,
+  searchPatient
+} from "../components/service/patient-service";
 
 const HomeScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
+  const [search, setSearch] = useState("");
+  let searchP;
   useEffect(() => {
-    getPatient().then(data => setList(data));
+    if (list.length === 0) getPatient().then(data => setList(data));
   });
+
+  const updateSearch = value => {
+    setSearch(value);
+    debounce(() => {
+      searchPatient(value).then(data => setList(data));
+    }, 1000)();
+  };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <SearchBar
+        lightTheme
+        placeholder="Type Here..."
+        value={search}
+        onChangeText={updateSearch}
+      />
       <FlatList
+        style={{ flex: 1 }}
         keyExtractor={keyExtractor}
         data={list}
         renderItem={renderItem}

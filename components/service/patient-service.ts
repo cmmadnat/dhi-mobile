@@ -25,3 +25,9 @@ export interface Patient {
 export const getPatient = () => {
   return superagent.get(`${URL}/api/get`).then(data => data.body as Patient[]);
 };
+
+export const searchPatient = query => {
+  return superagent
+    .get(`${URL}/api/get/${query}`)
+    .then(data => data.body as Patient[]);
+};
