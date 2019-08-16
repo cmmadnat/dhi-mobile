@@ -1,7 +1,9 @@
 import React from "react";
 import { StyleSheet, View, Text, FlatList, SafeAreaView } from "react-native";
-import { Button } from "react-native-elements";
+import { Button, Icon } from "react-native-elements";
 import { ListItem } from "react-native-elements";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 const list = [
   {
     name: "Amy Farha",
@@ -62,5 +64,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   }
 });
+HomeScreen.navigationOptions = ({ navigation }) => {
+  return {
+    tabBarIcon: ({ tintColor }) => {
+      return <Ionicons name={`md-home`} size={25} color={tintColor} />;
+    },
+    tabBarColor: "#ff66ff"
+  };
+};
 
 export default HomeScreen;
