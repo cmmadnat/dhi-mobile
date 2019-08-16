@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, FlatList, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text, FlatList, StatusBar } from "react-native";
 import { Button, Icon, SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
+
 //@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { debounce } from "lodash";
@@ -10,11 +11,11 @@ import {
   Patient,
   searchPatient
 } from "../components/service/patient-service";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const HomeScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
   const [search, setSearch] = useState("");
-  let searchP;
   useEffect(() => {
     if (list.length === 0) getPatient().then(data => setList(data));
   });
@@ -25,8 +26,20 @@ const HomeScreen = ({ navigation }) => {
       searchPatient(value).then(data => setList(data));
     }, 1000)();
   };
+  const renderItem = ({ item }: { item: Patient }) => {
+    const subtitle = `${item.gender} - บัตรประชาชน ${item.PatientCID}`;
+    return (
+      <ListItem
+        onPress={() => {
+          navigation.navigate("pickSurvey");
+        }}
+        title={item.Name}
+        subtitle={subtitle}
+      />
+    );
+  };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <SearchBar
         lightTheme
         placeholder="Type Here..."
@@ -39,13 +52,8 @@ const HomeScreen = ({ navigation }) => {
         data={list}
         renderItem={renderItem}
       />
-    </SafeAreaView>
+    </View>
   );
-};
-
-const renderItem = ({ item }: { item: Patient }) => {
-  const subtitle = `${item.gender} - บัตรประชาชน ${item.PatientCID}`;
-  return <ListItem title={item.Name} subtitle={subtitle} />;
 };
 
 const keyExtractor = (item, index) => index.toString();
@@ -60,10 +68,7 @@ const styles = StyleSheet.create({
 });
 HomeScreen.navigationOptions = ({ navigation }) => {
   return {
-    tabBarIcon: ({ tintColor }) => {
-      return <Ionicons name={`md-home`} size={25} color={tintColor} />;
-    },
-    tabBarColor: "#ff66ff"
+    title: "เลือกคนไข้"
   };
 };
 
