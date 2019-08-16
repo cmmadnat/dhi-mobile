@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, FlatList, SafeAreaView } from "react-native";
 import { Button, Icon } from "react-native-elements";
 import { ListItem } from "react-native-elements";
+//@ts-ignore
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { getPatient, Patient } from "../components/service/patient-service";
 
 const list = [
   {
@@ -35,24 +37,25 @@ const list2 = [
 ];
 
 const HomeScreen = ({ navigation }) => {
+  const [list, setList] = useState([]);
+  useEffect(() => {
+    getPatient().then(data => setList(data));
+  });
   return (
     <SafeAreaView>
       <FlatList
         keyExtractor={keyExtractor}
-        data={list2}
+        data={list}
         renderItem={renderItem}
       />
     </SafeAreaView>
   );
 };
 
-const renderItem = ({ item }) => (
-  <ListItem
-    title={item.name}
-    subtitle={item.subtitle}
-    leftAvatar={{ source: { uri: item.avatar_url } }}
-  />
-);
+const renderItem = ({ item }: { item: Patient }) => {
+  const subtitle = `${item.gender} - บัตรประชาชน ${item.PatientCID}`;
+  return <ListItem title={item.Name} subtitle={subtitle} />;
+};
 
 const keyExtractor = (item, index) => index.toString();
 
