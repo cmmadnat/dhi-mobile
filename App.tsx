@@ -20,6 +20,7 @@ const surveyStack = createStackNavigator(
     pickSurvey: { screen: PickSurveyScreen }
   },
   {
+    initialRouteName: "pickSurvey",
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: "transparent"
@@ -58,7 +59,8 @@ const switchNavigator = createSwitchNavigator(
     )
   },
   {
-    initialRouteName: "AuthStack"
+    // initialRouteName: "AuthStack"
+    initialRouteName: "AppStack"
   }
 );
 
