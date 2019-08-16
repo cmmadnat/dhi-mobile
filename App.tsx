@@ -1,10 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, Image } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import {
   createSwitchNavigator,
   createAppContainer,
   createStackNavigator
 } from "react-navigation";
+import { Button, Input } from "react-native-elements";
 import { func } from "prop-types";
 import AboutScreen from "./about-screen";
 
@@ -16,12 +17,29 @@ function LoginScreen({ navigation }) {
         resizeMode={"center"}
         style={styles.logo}
       />
-      <View style={{ flex: 3 }}>
-        
+      <View style={{ flex: 4, width: "100%", padding: 10 }}>
+        <Input
+          label="Username"
+          leftIconContainerStyle={{ marginRight: 10 }}
+          containerStyle={styles.inputContainer}
+          placeholder="Username ..."
+          leftIcon={{ type: "font-awesome", name: "user", color: "#6D6F6F" }}
+          autoFocus
+        />
+
+        <Input
+          label="Password"
+          leftIconContainerStyle={{ marginRight: 10 }}
+          containerStyle={styles.inputContainer}
+          placeholder="Password ..."
+          leftIcon={{ type: "font-awesome", name: "unlock", color: "#6D6F6F" }}
+          secureTextEntry={true}
+        />
+
         <Button
-          title="Click to go to next page"
+          title="Login"
           onPress={() => {
-            navigation.navigate("AppStack");
+            // navigation.navigate("AppStack");
           }}
         />
       </View>
@@ -43,7 +61,7 @@ const HomeScreen = ({ navigation }) => {
 };
 const switchNavigator = createSwitchNavigator(
   {
-    AuthStack: createStackNavigator({ Login: { screen: LoginScreen } }),
+    AuthStack: { screen: LoginScreen },
     AppStack: createStackNavigator({
       Home: { screen: HomeScreen },
       About: { screen: AboutScreen }
@@ -65,6 +83,11 @@ const styles = StyleSheet.create({
   },
   logo: {
     flex: 1,
-    width: 212
-  }
+    width: 150,
+    marginTop: 50
+  },
+  inputContainer: {
+    marginBottom: 10
+  },
+  inputContainerInput: { paddingLeft: 10 }
 });
