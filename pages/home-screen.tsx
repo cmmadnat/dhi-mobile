@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  ScrollView,
-  Text,
-  FlatList,
-  StatusBar,
-  View
-} from "react-native";
-import { Button, Icon, SearchBar } from "react-native-elements";
+import { StyleSheet, ScrollView, FlatList } from "react-native";
+import { SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
 
-//@ts-ignore
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { debounce } from "lodash";
 import {
   getPatient,
   Patient,
   searchPatient
 } from "../components/service/patient-service";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { BlurView } from "expo-blur";
 import { getHeaderInset } from "../components/header-inset";
 
 const HomeScreen = ({ navigation }) => {
@@ -67,22 +56,9 @@ const HomeScreen = ({ navigation }) => {
 
 const keyExtractor = (item, index) => index.toString();
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
-HomeScreen.navigationOptions = ({ navigation }) => {
+HomeScreen.navigationOptions = () => {
   return {
-    title: "เลือกคนไข้",
-    headerStyle: {
-      backgroundColor: "transparent"
-    },
-    headerTransparent: true,
-    headerBackground: <BlurView style={{ flex: 1 }} intensity={100} />
+    title: "เลือกคนไข้"
   };
 };
 

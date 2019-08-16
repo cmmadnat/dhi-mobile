@@ -2,9 +2,7 @@ import React from "react";
 import {
   createSwitchNavigator,
   createAppContainer,
-  createStackNavigator,
-  HeaderStyleInterpolator,
-  TransitionConfig
+  createStackNavigator
 } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 //@ts-ignore
@@ -15,13 +13,25 @@ import AboutScreen from "./pages/about-screen";
 import LoginScreen from "./pages/login-page";
 import HomeScreen from "./pages/home-screen";
 import PickSurveyScreen from "./pages/pick-survey-screen";
-import { StatusBar, StatusBarIOS, Platform, View } from "react-native";
 
-const surveyStack = createStackNavigator({
-  pickPatient: { screen: HomeScreen },
-  pickSurvey: { screen: PickSurveyScreen }
-});
-surveyStack.navigationOptions = ({ navigation }) => {
+const surveyStack = createStackNavigator(
+  {
+    pickPatient: { screen: HomeScreen },
+    pickSurvey: { screen: PickSurveyScreen }
+  },
+  {
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: "transparent"
+      },
+      headerTransparent: true,
+      headerBackground: (
+        <BlurView tint="default" style={{ flex: 1 }} intensity={100} />
+      )
+    }
+  }
+);
+surveyStack.navigationOptions = () => {
   return {
     tabBarIcon: ({ tintColor }) => {
       return <Ionicons name={`md-home`} size={25} color={tintColor} />;

@@ -21,7 +21,7 @@ export const getHeaderInset = () => {
     },
     ios: {
       contentInset: { top: HEADER_HEIGHT },
-      contentOffset: { y: -HEADER_HEIGHT }
+      contentOffset: { y: -HEADER_HEIGHT, x: 0 }
     }
   });
 };
