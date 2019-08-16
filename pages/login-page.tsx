@@ -1,13 +1,13 @@
 import React from "react";
-import LottieView from "lottie-react-native";
-import { View, Image, Button, StyleSheet } from "react-native";
-import { Input } from "react-native-elements";
+import { View, Image, StyleSheet } from "react-native";
+import { Input, Button } from "react-native-elements";
+import LoadingComponent from "../components/loading-component";
 
 function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("./assets/logo.png")}
+        source={require("../assets/logo.png")}
         resizeMode={"center"}
         style={styles.logo}
       />
@@ -36,6 +36,7 @@ function LoginScreen({ navigation }) {
             // navigation.navigate("AppStack");
           }}
         />
+        <LoadingComponent />
       </View>
     </View>
   );
