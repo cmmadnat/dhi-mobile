@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { Input, Button } from "react-native-elements";
 import LoadingComponent from "../components/loading-component";
 
 function LoginScreen({ navigation }) {
+  const [showLoading, setShowLoading] = useState(false);
   return (
     <View style={styles.container}>
       <Image
@@ -33,10 +34,13 @@ function LoginScreen({ navigation }) {
         <Button
           title="Login"
           onPress={() => {
-            // navigation.navigate("AppStack");
+            setShowLoading(true);
+            setTimeout(() => {
+              navigation.navigate("AppStack");
+            }, 4000);
           }}
         />
-        <LoadingComponent />
+        <LoadingComponent show={showLoading} />
       </View>
     </View>
   );

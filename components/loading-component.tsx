@@ -1,7 +1,9 @@
 import * as React from "react";
 import LottieView from "lottie-react-native";
 
-export interface IAppLoadingComponentProps {}
+export interface IAppLoadingComponentProps {
+  show: boolean;
+}
 
 export default class AppLoadingComponent extends React.Component<
   IAppLoadingComponentProps
@@ -11,11 +13,18 @@ export default class AppLoadingComponent extends React.Component<
   };
   lottie: LottieView;
   public render() {
+    const { show } = this.props;
+
     return (
       <LottieView
         ref={el => (this.lottie = el)}
         source={require("../assets/528-spinner-loading.json")}
-        style={{ width: 100, height: 100, alignSelf: "center" }}
+        style={{
+          display: show ? "flex" : "none",
+          width: 100,
+          height: 100,
+          alignSelf: "center"
+        }}
       />
     );
   }
