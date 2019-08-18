@@ -14,12 +14,16 @@ import LoginScreen from "./pages/login-page";
 import HomeScreen from "./pages/home-screen";
 import AppPatientScreen from "./pages/patient-detail-screen";
 import PickSurveyScreen from "./pages/pick-survey-screen";
+import PickSurveyScreen2 from "./pages/pick-survey-screen2";
+import ShowSurvey from "./pages/show-survey-screen";
 
 const surveyStack = createStackNavigator(
   {
     pickPatient: { screen: HomeScreen },
     patientDetail: { screen: AppPatientScreen },
-    pickSurvey: { screen: PickSurveyScreen }
+    pickSurvey: { screen: PickSurveyScreen },
+    pickSurvey2: { screen: PickSurveyScreen2 },
+    showSurvey: { screen: ShowSurvey }
   },
   {
     defaultNavigationOptions: {

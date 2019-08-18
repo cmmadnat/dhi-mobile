@@ -12,11 +12,11 @@ import {
 } from "../components/service/patient-service";
 import { getHeaderInset } from "../components/header-inset";
 
-const PickSurveyScreen = ({ navigation }) => {
+const PickSurveyScreen2 = ({ navigation }) => {
   const [list, setList] = useState([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
-    const url = getUrl("หญิง", 20);
+    const url = getUrl(28);
     if (list.length === 0)
       superagent
         .get(url)
@@ -32,13 +32,13 @@ const PickSurveyScreen = ({ navigation }) => {
       searchPatient(value).then(data => setList(data));
     }, 1000)();
   };
-  const renderItem = ({ item }: { item: { CateName: string; id: number } }) => {
+  const renderItem = ({ item }: { item: { name: string; id: number } }) => {
     return (
       <ListItem
         onPress={() => {
-          navigation.navigate("pickSurvey2");
+          navigation.navigate("showSurvey");
         }}
-        title={item.CateName}
+        title={item.name}
       />
     );
   };
@@ -62,35 +62,14 @@ const PickSurveyScreen = ({ navigation }) => {
 
 const keyExtractor = (item, index) => index.toString();
 const baseUrl = "http://run.ict.mahidol.ac.th:443";
-const getUrl = (patientGender, patientAge) => {
-  let list = "0";
-  if (patientGender == "หญิง" && patientAge >= 20 && patientAge <= 60) {
-    //เพศหญิง 20-60
-    list += ",29";
-  }
-  if (patientAge >= 3 && patientAge <= 13) {
-    //age 3-13
-    list += ",30";
-  }
-  if (patientAge >= 10 && patientAge <= 19) {
-    //age 10-24
-    list += ",2";
-  }
-  if (patientAge >= 20 && patientAge <= 60) {
-    //age 20-60
-    list += ",3";
-  }
-  if (patientAge >= 60) {
-    //age 60++
-    list += ",4";
-  }
-  return baseUrl + "/cate_list?list=" + list;
+const getUrl = category => {
+  return "http://run.ict.mahidol.ac.th:443/getActive?cateid=" + category;
 };
 
-PickSurveyScreen.navigationOptions = () => {
+PickSurveyScreen2.navigationOptions = () => {
   return {
     title: "เลือกแบบสอบถาม"
   };
 };
 
-export default PickSurveyScreen;
+export default PickSurveyScreen2;
