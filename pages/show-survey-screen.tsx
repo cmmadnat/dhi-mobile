@@ -11,10 +11,14 @@ export default function AppShowSurveyScreen(props: IAppShowSurveyScreenProps) {
     <WebView
       style={{ flex: 1 }}
       {...getHeaderInset()}
-      scalesPageToFit={false}
-      injectedJavaScript={INJECTEDJAVASCRIPT}
+      // scalesPageToFit={false}
+      // injectedJavaScript={INJECTEDJAVASCRIPT}
       scrollEnabled
       source={{ uri: "http://run.ict.mahidol.ac.th:443/survey.html?id=97" }}
+      // source={{
+      //   uri:
+      //     "https://surveyjs.io//Examples/LibrarySinglePage?id=real-patient-history&platform=jQuery&theme=default"
+      // }}
     />
   );
 }
