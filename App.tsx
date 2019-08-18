@@ -12,11 +12,13 @@ import { BlurView } from "expo-blur";
 import AboutScreen from "./pages/about-screen";
 import LoginScreen from "./pages/login-page";
 import HomeScreen from "./pages/home-screen";
-import PickSurveyScreen from "./pages/patient-detail-screen";
+import AppPatientScreen from "./pages/patient-detail-screen";
+import PickSurveyScreen from "./pages/pick-survey-screen";
 
 const surveyStack = createStackNavigator(
   {
     pickPatient: { screen: HomeScreen },
+    patientDetail: { screen: AppPatientScreen },
     pickSurvey: { screen: PickSurveyScreen }
   },
   {

@@ -11,7 +11,7 @@ import {
 } from "../components/service/patient-service";
 import { getHeaderInset } from "../components/header-inset";
 
-const HomeScreen = ({ navigation }) => {
+const PickSurveyScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
     return (
       <ListItem
         onPress={() => {
-          navigation.navigate("patientDetail");
+          navigation.navigate("pickSurvey");
         }}
         title={item.Name}
         subtitle={subtitle}
@@ -56,10 +56,10 @@ const HomeScreen = ({ navigation }) => {
 
 const keyExtractor = (item, index) => index.toString();
 
-HomeScreen.navigationOptions = () => {
+PickSurveyScreen.navigationOptions = () => {
   return {
-    title: "เลือกคนไข้"
+    title: "เลือกแบบสอบถาม"
   };
 };
 
-export default HomeScreen;
+export default PickSurveyScreen;

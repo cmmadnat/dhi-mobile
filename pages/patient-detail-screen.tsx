@@ -1,15 +1,27 @@
 import * as React from "react";
-import { View, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import { Card, ListItem } from "react-native-elements";
 import { getHeaderInset } from "../components/header-inset";
 import AppBackground from "../components/background-component";
+import {
+  NavigationScreenProp,
+  NavigationState,
+  NavigationParams
+} from "react-navigation";
 
-export interface IAppPickSurveyScreenProps {}
+export interface PickSurveyScreenProps {
+  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+}
 
-export default function AppPickSurveyScreen(props: IAppPickSurveyScreenProps) {
+export default function PatientDetailScreen({ navigation }) {
   return (
     <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
-      <AppBackground name={"Thitiwat Hemvimon"} />
+      <AppBackground
+        name={"Thitiwat Hemvimon"}
+        pickSurvey={() => {
+          navigation.navigate("pickSurvey");
+        }}
+      />
       <Card title="ข้อมูลทั่วไป">
         <ListItem title={"เลขบัตรประชาชน"} subtitle={"1100500333162"} />
         <ListItem title={"ชื่อ"} subtitle={"Thitiwat Hemvimon  "} />

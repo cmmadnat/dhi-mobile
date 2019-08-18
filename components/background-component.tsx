@@ -4,9 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 export interface IAppBackgroundProps {
   name: string;
+  pickSurvey: () => void;
 }
 
-export default function AppBackground({ name }: IAppBackgroundProps) {
+export default function AppBackground({
+  name,
+  pickSurvey
+}: IAppBackgroundProps) {
   const randomNumber = Math.round(Math.random() * 10) % 3;
   const images = [
     require("../assets/background/1.jpg"),
@@ -24,6 +28,7 @@ export default function AppBackground({ name }: IAppBackgroundProps) {
           marginBottom: 0
         }}
         title="เลือกแบบสอบถาม"
+        onPress={pickSurvey}
       />
     </Card>
   );
