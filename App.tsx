@@ -12,7 +12,7 @@ import { BlurView } from "expo-blur";
 import AboutScreen from "./pages/about-screen";
 import LoginScreen from "./pages/login-page";
 import HomeScreen from "./pages/home-screen";
-import PickSurveyScreen from "./pages/pick-survey-screen";
+import PickSurveyScreen from "./pages/patient-detail-screen";
 
 const surveyStack = createStackNavigator(
   {
@@ -20,7 +20,6 @@ const surveyStack = createStackNavigator(
     pickSurvey: { screen: PickSurveyScreen }
   },
   {
-    // initialRouteName: "pickSurvey",
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: "transparent"
@@ -37,7 +36,7 @@ surveyStack.navigationOptions = () => {
     tabBarIcon: ({ tintColor }) => {
       return <Ionicons name={`md-home`} size={25} color={tintColor} />;
     },
-    tabBarColor: "#ff66ff"
+    tabBarColor: "#324376"
   };
 };
 
@@ -53,7 +52,7 @@ const switchNavigator = createSwitchNavigator(
         shifting: true,
         initialRouteName: "Home",
         activeColor: "#f0edf6",
-        inactiveColor: "#3e2465",
+        inactiveColor: "#212121",
         barStyle: { backgroundColor: "#694fad" }
       }
     )

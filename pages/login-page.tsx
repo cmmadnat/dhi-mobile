@@ -35,10 +35,10 @@ function LoginScreen({ navigation }) {
           title="Login"
           onPress={() => {
             setShowLoading(true);
-            navigation.navigate("AppStack");
-            // setTimeout(() => {
-            //   navigation.navigate("AppStack");
-            // }, 4000);
+            // navigation.navigate("AppStack");
+            setTimeout(() => {
+              navigation.navigate("AppStack");
+            }, 100);
           }}
         />
         <LoadingComponent show={showLoading} />
