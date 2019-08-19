@@ -15,21 +15,28 @@ import { getHeaderInset } from "../components/header-inset";
 const PickSurveyScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
   const [search, setSearch] = useState("");
+  const [initialList, setInitialList] = useState([]);
   useEffect(() => {
     const url = getUrl("หญิง", 20);
-    if (list.length === 0)
+    if (initialList.length === 0)
       superagent
         .get(url)
         .then(data => data.body)
         .then(data => {
           setList(data);
+          setInitialList(data);
         });
   });
 
   const updateSearch = value => {
     setSearch(value);
     debounce(() => {
-      searchPatient(value).then(data => setList(data));
+      if (value.length !== 0) {
+        const filteredList = initialList.filter(
+          it => it.CateName.toLowerCase().search(value) !== -1
+        );
+        setList(filteredList);
+      } else setList(initialList);
     }, 1000)();
   };
   const renderItem = ({ item }: { item: { CateName: string; id: number } }) => {
