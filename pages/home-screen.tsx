@@ -17,6 +17,7 @@ import {
   searchPatient
 } from "../components/service/patient-service";
 import { getHeaderInset } from "../components/header-inset";
+import { logout } from "../components/service/login-service";
 
 const HomeScreen = ({ navigation }) => {
   const [list, setList] = useState([]);
@@ -68,7 +69,8 @@ HomeScreen.navigationOptions = ({ navigation }) => {
     title: "เลือกคนไข้",
     headerRight: (
       <TouchableOpacity
-        onPress={() => {
+        onPress={async () => {
+          await logout();
           navigation.navigate("AuthStack");
         }}
       >

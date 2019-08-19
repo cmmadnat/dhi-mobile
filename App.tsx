@@ -16,6 +16,7 @@ import AppPatientScreen from "./pages/patient-detail-screen";
 import PickSurveyScreen from "./pages/pick-survey-screen";
 import PickSurveyScreen2 from "./pages/pick-survey-screen2";
 import ShowSurvey from "./pages/show-survey-screen";
+import { isLogin } from "./components/service/login-service";
 
 const surveyStack = createStackNavigator(
   {

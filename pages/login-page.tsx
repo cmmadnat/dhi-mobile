@@ -1,15 +1,27 @@
-import React, { useState } from "react";
-import { View, Image, StyleSheet, TouchableNativeFeedback } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableNativeFeedback,
+  Alert
+} from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import LoadingComponent from "../components/loading-component";
 import { Formik, yupToFormErrors } from "formik";
 import * as yup from "yup";
+import { isLogin, login } from "../components/service/login-service";
 const schema = yup.object().shape({
   username: yup.string().required("กรุณากรอกชื่อผู้ใช้งาน"),
   password: yup.string().required("กรุณากรอกรหัสผ่าน")
 });
 
 function LoginScreen({ navigation }) {
+  useEffect(() => {
+    isLogin().then(loggedIn => {
+      if (loggedIn) navigation.navigate("AppStack");
+    });
+  });
   const [showLoading, setShowLoading] = useState(false);
   return (
     <View style={styles.container}>
@@ -22,11 +34,18 @@ function LoginScreen({ navigation }) {
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={schema}
-          onSubmit={values => {
+          onSubmit={async (values, actions) => {
             setShowLoading(true);
-            setTimeout(() => {
-              navigation.navigate("AppStack");
-            }, 100);
+            const result = await login(values.username, values.password);
+            if (result) navigation.navigate("AppStack");
+            else {
+              setShowLoading(false);
+              actions.setSubmitting(false);
+              Alert.alert(
+                "เข้าสู่ระบบไม่สำเร็จ",
+                "โปรดตรวจสอบชื่อผู้ใช้งาน\nและรหัสผ่านอีกครั้ง"
+              );
+            }
           }}
           render={({
             handleSubmit,
