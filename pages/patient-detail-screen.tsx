@@ -13,7 +13,7 @@ export interface PickSurveyScreenProps {
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-export default function PatientDetailScreen({ navigation }) {
+function PatientDetailScreen({ navigation }) {
   return (
     <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
       <AppBackground
@@ -38,3 +38,8 @@ export default function PatientDetailScreen({ navigation }) {
     </ScrollView>
   );
 }
+PatientDetailScreen.navigationOptions = {
+  title: "รายละเอียดคนไข้"
+};
+
+export default PatientDetailScreen;
