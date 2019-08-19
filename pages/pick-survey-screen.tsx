@@ -53,7 +53,7 @@ const PickSurveyScreen = ({ navigation }) => {
     <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
       <SearchBar
         lightTheme
-        placeholder="Type Here..."
+        placeholder="ค้นหา ..."
         value={search}
         onChangeText={updateSearch}
       />
