@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, ScrollView, FlatList } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  Button,
+  TouchableOpacity
+} from "react-native";
 import { SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { debounce } from "lodash";
 import {
@@ -56,9 +63,18 @@ const HomeScreen = ({ navigation }) => {
 
 const keyExtractor = (item, index) => index.toString();
 
-HomeScreen.navigationOptions = () => {
+HomeScreen.navigationOptions = ({ navigation }) => {
   return {
-    title: "เลือกคนไข้"
+    title: "เลือกคนไข้",
+    headerRight: (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("AuthStack");
+        }}
+      >
+        <MaterialCommunityIcons name="logout" size={30} />
+      </TouchableOpacity>
+    )
   };
 };
 
