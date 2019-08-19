@@ -1,8 +1,13 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
+
 import { ScrollView } from "react-native";
 import { Card, ListItem } from "react-native-elements";
 import { getHeaderInset } from "../components/header-inset";
 import AppBackground from "../components/background-component";
+import {
+  Patient,
+  getCurrentPatient
+} from "../components/service/patient-service";
 import {
   NavigationScreenProp,
   NavigationState,
@@ -14,26 +19,34 @@ export interface PickSurveyScreenProps {
 }
 
 function PatientDetailScreen({ navigation }) {
+  const LOADING = "loading...";
+  const [patient, setPatient] = useState({ Name: LOADING } as Patient);
+  useEffect(() => {
+    if (patient.Name === LOADING) getCurrentPatient().then(p => setPatient(p));
+  });
   return (
     <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
       <AppBackground
-        name={"Thitiwat Hemvimon"}
+        name={patient.Name}
         pickSurvey={() => {
           navigation.navigate("pickSurvey");
         }}
       />
       <Card title="ข้อมูลทั่วไป">
-        <ListItem title={"เลขบัตรประชาชน"} subtitle={"1100500333162"} />
-        <ListItem title={"ชื่อ"} subtitle={"Thitiwat Hemvimon  "} />
-        <ListItem title={"วันเกิด"} subtitle={"2 May 1989 (30 ปี)"} />
+        <ListItem title={"เลขบัตรประชาชน"} subtitle={patient.PatientCID} />
+        <ListItem title={"ชื่อ"} subtitle={patient.Name} />
+        <ListItem
+          title={"วันเกิด"}
+          subtitle={patient.DOB + " (" + patient.Age + " ปี)"}
+        />
       </Card>
       <Card title="ข้อมูลทั่วไป">
-        <ListItem title={"บ้านเลขที่"} subtitle={"1100500333162"} />
-        <ListItem title={"หมู่"} subtitle={"Thitiwat Hemvimon  "} />
-        <ListItem title={"ตำบล"} subtitle={"Thitiwat Hemvimon  "} />
-        <ListItem title={"อำเภอ"} subtitle={"Thitiwat Hemvimon  "} />
-        <ListItem title={"จังหวัด"} subtitle={"Thitiwat Hemvimon  "} />
-        <ListItem title={"รหัสไปรษณีย์"} subtitle={"Thitiwat Hemvimon  "} />
+        <ListItem title={"บ้านเลขที่"} subtitle={patient.housenumber} />
+        <ListItem title={"หมู่"} subtitle={patient.moo} />
+        <ListItem title={"ตำบล"} subtitle={patient.DISTRICT_NAME} />
+        <ListItem title={"อำเภอ"} subtitle={patient.AMPHUR_NAME} />
+        <ListItem title={"จังหวัด"} subtitle={patient.PROVINCE_NAME} />
+        <ListItem title={"รหัสไปรษณีย์"} subtitle={patient.POSTCODE} />
       </Card>
     </ScrollView>
   );

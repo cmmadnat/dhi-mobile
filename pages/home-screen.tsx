@@ -14,7 +14,8 @@ import { debounce } from "lodash";
 import {
   getPatient,
   Patient,
-  searchPatient
+  searchPatient,
+  setCurrentPatient
 } from "../components/service/patient-service";
 import { getHeaderInset } from "../components/header-inset";
 import { logout } from "../components/service/login-service";
@@ -37,6 +38,7 @@ const HomeScreen = ({ navigation }) => {
     return (
       <ListItem
         onPress={() => {
+          setCurrentPatient(item);
           navigation.navigate("patientDetail");
         }}
         title={item.Name}
