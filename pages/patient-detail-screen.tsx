@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ScrollView } from "react-native";
-import { Card, ListItem } from "react-native-elements";
+import { Card, ListItem, Text } from "react-native-elements";
 import { getHeaderInset } from "../components/header-inset";
 import AppBackground from "../components/background-component";
 import {
@@ -8,6 +8,7 @@ import {
   NavigationState,
   NavigationParams
 } from "react-navigation";
+import PhotoPick from "../components/photo-pick";
 
 export interface PickSurveyScreenProps {
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -34,6 +35,10 @@ function PatientDetailScreen({ navigation }) {
         <ListItem title={"อำเภอ"} subtitle={"Thitiwat Hemvimon  "} />
         <ListItem title={"จังหวัด"} subtitle={"Thitiwat Hemvimon  "} />
         <ListItem title={"รหัสไปรษณีย์"} subtitle={"Thitiwat Hemvimon  "} />
+      </Card>
+      <Card>
+        <Text>รูปภาพ</Text>
+        <PhotoPick></PhotoPick>
       </Card>
     </ScrollView>
   );
