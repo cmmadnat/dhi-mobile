@@ -4,7 +4,8 @@ import {
   ScrollView,
   FlatList,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { ListItem } from "react-native-elements";
@@ -72,8 +73,25 @@ HomeScreen.navigationOptions = ({ navigation }) => {
     headerRight: (
       <TouchableOpacity
         onPress={async () => {
-          await logout();
-          navigation.navigate("AuthStack");
+
+          // Works on both iOS and Android
+          Alert.alert(
+            'ออกจากระบบ',
+            'คุณต้องการออกจากระบบหรือไม่',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+              },
+              {
+                text: 'OK', onPress: async () => {
+                  await logout();
+                  navigation.navigate("AuthStack");
+                }
+              },
+            ],
+            { cancelable: false },
+          );
         }}
       >
         <MaterialCommunityIcons name="logout" size={30} />
