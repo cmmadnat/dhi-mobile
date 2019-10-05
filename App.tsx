@@ -17,6 +17,11 @@ import PickSurveyScreen from "./pages/pick-survey-screen";
 import PickSurveyScreen2 from "./pages/pick-survey-screen2";
 import ShowSurvey from "./pages/show-survey-screen";
 import { isLogin } from "./components/service/login-service";
+import { YellowBox } from "react-native";
+
+YellowBox.ignoreWarnings([
+  "ReactNative.NativeModules.LottieAnimationView.getConstants"
+]);
 
 const surveyStack = createStackNavigator(
   {
