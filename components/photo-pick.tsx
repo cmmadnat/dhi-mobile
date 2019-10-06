@@ -4,12 +4,17 @@ import {
   SafeAreaView,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from "react-native";
-import { Button, Icon, Image } from "react-native-elements";
+import { Button, Icon, Image, registerCustomIconType } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
 import ImageView from "react-native-image-view";
+import { getToken } from "./service/login-service";
+
+// const YOUR_SERVER_URL = "http://localhost:8080/photo/upload"
+const YOUR_SERVER_URL = "http://192.168.101.39:8080/photo/upload"
 
 const styles = StyleSheet.create({
   library: {
@@ -39,11 +44,12 @@ const PhotoPick = () => {
   useEffect(() => {
     const check = async () => {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      setHasCameraPermission(status === "granted");
-    };
-    check();
+      const { status: status2 } = await Permissions.askAsync(Permissions.CAMERA);
+      setHasCameraPermission(status2 === "granted" && status === "granted");
+    }
+    check()
   });
-  const openCamera = () => {};
+  const openCamera = () => { };
   const image =
     "https://ichef.bbci.co.uk/news/320/cpsprodpb/3772/production/_108849141_48752688976_f4a356d82b_z.jpg";
   const images = [
@@ -72,12 +78,28 @@ const PhotoPick = () => {
       <View style={styles.container}>
         <View style={styles.box}>
           <Button
-            onPress={() => {
-              ImagePicker.launchCameraAsync({
+            onPress={async () => {
+
+              if (!hasCameraPermission) {
+                const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+                const { status: status2 } = await Permissions.askAsync(Permissions.CAMERA);
+                setHasCameraPermission(status2 === "granted" && status === "granted");
+              }
+
+              let result = await ImagePicker.launchCameraAsync({
                 allowsEditing: true,
                 mediaTypes: ImagePicker.MediaTypeOptions.Images
               });
+              if (result.cancelled) {
+                return;
+              }
+              else if (result.cancelled === false) {
+                // ImagePicker saves the taken photo to disk and returns a local URI to it
+                const token = await getToken()
+                upload(result, token).then(data => console.log(data)).catch(e => console.error(e))
+              }
             }}
+
             icon={
               <Icon
                 name="add-a-photo"
@@ -90,7 +112,12 @@ const PhotoPick = () => {
         </View>
         <View style={styles.box}>
           <Button
-            onPress={() => {
+            onPress={async () => {
+              if (!hasCameraPermission) {
+                const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+                const { status: status2 } = await Permissions.askAsync(Permissions.CAMERA);
+                setHasCameraPermission(status2 === "granted" && status === "granted");
+              }
               ImagePicker.launchImageLibraryAsync({
                 allowsEditing: true
               });
@@ -107,8 +134,9 @@ const PhotoPick = () => {
         </View>
       </View>
       <View style={styles.library}>
-        {[1, 2, 3, 4, 5, 6].map(() => (
+        {[1, 2, 3, 4, 5, 6].map((it) => (
           <TouchableOpacity
+            key={it}
             onPress={() => {
               setIsImageViewVisible(true);
             }}
@@ -133,3 +161,28 @@ const PhotoPick = () => {
   );
 };
 export default PhotoPick;
+function upload(result, token) {
+  let localUri = result.uri;
+  let filename = localUri.split('/').pop();
+  // Infer the type of the image
+  let match = /\.(\w+)$/.exec(filename);
+  let type = match ? `image/${match[1]}` : `image`;
+  // Upload the image using the fetch and FormData APIs
+  let formData = new FormData();
+  // Assume "photo" is the name of the form field the server expects
+  // @ts-ignore
+  formData.append('image', { uri: localUri, name: filename, type });
+  formData.append('lat', '0.00')
+  formData.append('lng', '0.00')
+  formData.append('description', '0.00')
+  formData.append('patientId', '0.00')
+  return fetch(YOUR_SERVER_URL, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'authorization': 'Bearer ' + token,
+      'content-type': 'multipart/form-data',
+    },
+  });
+}
+
