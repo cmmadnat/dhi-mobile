@@ -6,7 +6,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
-  Platform
+  Platform,
+  Text,
+  Dimensions
 } from "react-native";
 import { Button, Icon, Image, registerCustomIconType } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
@@ -15,24 +17,28 @@ import ImageView from "react-native-image-view";
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import Prompt from 'rn-prompt'
+import superagent from 'superagent'
 
 
-import { getToken } from "./service/login-service";
+import { getToken, baseUrl } from "./service/login-service";
+import { MaterialIcons } from "@expo/vector-icons";
+const { width } = Dimensions.get('window');
 
 
-const YOUR_SERVER_URL = "http://localhost:8080/photo/upload"
+const YOUR_SERVER_URL = baseUrl + "/photo/upload"
 
 const styles = StyleSheet.create({
   library: {
     flexWrap: "wrap",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: 'flex-start',
     flexDirection: "row"
   },
   imageStyle: {
-    width: 100,
+    width: width / 3 - 35,
     height: 100,
     marginBottom: 10
+    , marginRight: 10
   },
   container: {
     display: "flex",
@@ -41,29 +47,62 @@ const styles = StyleSheet.create({
   box: {
     flex: 1,
     padding: 5
-  }
+  },
+  footer: {
+    display: 'flex',
+    width,
+    height: 100,
+    flexDirection: 'column',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  footerButton: {
+    flexDirection: 'row',
+    marginLeft: 15,
+    alignSelf: 'flex-end'
+  },
+  footerText: {
+    fontSize: 16,
+    color: '#FFF',
+    alignSelf: 'center'
+  },
+
 });
 
-const PhotoPick = () => {
+interface PhotoPickProps {
+  patientId: number
+}
+const PhotoPick = ({ patientId }: PhotoPickProps) => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [promptVisible, setPromptVisible] = useState(false)
   const [result, setResult] = useState(null)
   const [location, setLocation] = useState(null)
   const [token, setToken] = useState('')
+  const [photos, setPhotos] = useState()
+  const [imageIndex, setImageIndex] = useState(0)
 
+  const getPhotosCheck = async () => {
+    const token = await getToken()
+    getPhotos(patientId, token).then(data => {
+      console.log('get phto')
+      const p = data.body.map(it => {
+        const path1 = it.path.split('/')
+        const path2 = it.path.split('\\')
+        const rawFileName = path1.length === 1 ? path2[path2.length - 1] : path1[path1.length - 1]
+        return ({ id: it.id, description: it.description, uri: baseUrl + '/patient_photo/' + rawFileName });
+      })
+      setPhotos(p)
+    }
+    ).catch(e => console.error(e))
+  }
   useEffect(() => {
 
-    const _getLocationAsync = async () => {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        this.setState({
-          errorMessage: 'Permission to access location was denied',
-        });
-      }
+    if (patientId && !photos) getPhotosCheck()
 
-    };
-
+  })
+  useEffect(() => {
     const check = async () => {
       const tokenString = await getToken()
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -79,31 +118,9 @@ const PhotoPick = () => {
         _getLocationAsync();
       }
     }
+
     check()
   });
-  const openCamera = () => { };
-  const image =
-    "https://ichef.bbci.co.uk/news/320/cpsprodpb/3772/production/_108849141_48752688976_f4a356d82b_z.jpg";
-  const images = [
-    {
-      source: {
-        uri:
-          "https://ichef.bbci.co.uk/news/320/cpsprodpb/3772/production/_108849141_48752688976_f4a356d82b_z.jpg"
-      }
-    },
-    {
-      source: {
-        uri:
-          "https://ichef.bbci.co.uk/news/320/cpsprodpb/3772/production/_108849141_48752688976_f4a356d82b_z.jpg"
-      }
-    },
-    {
-      source: {
-        uri:
-          "https://ichef.bbci.co.uk/news/320/cpsprodpb/3772/production/_108849141_48752688976_f4a356d82b_z.jpg"
-      }
-    }
-  ];
 
   return (
     <SafeAreaView style={{ display: "flex" }}>
@@ -175,48 +192,78 @@ const PhotoPick = () => {
         </View>
       </View>
       <View style={styles.library}>
-        {[1, 2, 3, 4, 5, 6].map((it) => (
+        {photos ? photos.map((it, index) => (
           <TouchableOpacity
-            key={it}
+            key={it.id}
             onPress={() => {
+              setImageIndex(index)
               setIsImageViewVisible(true);
             }}
           >
             <Image
-              source={{ uri: image }}
+              source={it}
               style={styles.imageStyle}
               PlaceholderContent={<ActivityIndicator />}
             />
           </TouchableOpacity>
-        ))}
+        )) : []}
       </View>
       <ImageView
-        images={images}
-        imageIndex={0}
+        images={photos ? photos.map(it => ({ source: it, description: it.description, id: it.id })) : []}
+        imageIndex={imageIndex}
         isVisible={isImageViewVisible}
         onClose={() => {
           setIsImageViewVisible(false);
         }}
+        renderFooter={(currentImage) => {
+          const title = currentImage.description
+          return (<View style={styles.footer}>
+            <Text style={styles.footerText}>{title}</Text>
+            <TouchableOpacity style={styles.footerButton} onPress={async () => {
+              // Works on both iOS and Android
+              Alert.alert(
+                'ลบรูป',
+                'ยืนยันการลบรูป',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'OK', onPress: async () => {
+                      setIsImageViewVisible(false)
+                      await deletePhoto(currentImage.id, token)
+                      await getPhotosCheck()
+                    }
+                  },
+                ],
+                { cancelable: false },
+              );
+            }}>
+              <MaterialIcons name='delete' size={32} color="white"></MaterialIcons>
+            </TouchableOpacity>
+          </View>);
+        }}
       />
       <Prompt
-        title="Say something"
-        placeholder="Start typing"
-        defaultValue="Hello"
+        title="กรอกรายละเอียดภาพ"
+        placeholder="พิมพ์รายละเอียดของภาพถ่าย"
         visible={promptVisible}
         onCancel={() => {
           setPromptVisible(false)
         }}
         onSubmit={(value) => {
-          upload(result, location, value, token).then(data => {
-            setPromptVisible(false)
-            return console.log(data);
-          }).catch(e => console.error(e))
+          setPromptVisible(false)
+          upload(result, location, value, patientId, token).then(data => {
+            getPhotosCheck()
+          }).then().catch(e => console.error(e))
         }} />
     </SafeAreaView>
   );
 };
 export default PhotoPick;
-function upload(result: any, location: Location.LocationData, description, token: string) {
+function upload(result: any, location: Location.LocationData, description: string, patientId: number, token: string) {
   let localUri = result.uri;
   let filename = localUri.split('/').pop();
   // Infer the type of the image
@@ -230,7 +277,7 @@ function upload(result: any, location: Location.LocationData, description, token
   formData.append('lat', location.coords.latitude + '')
   formData.append('lng', location.coords.longitude + '')
   formData.append('description', description)
-  formData.append('patientId', '0.00')
+  formData.append('patientId', patientId + '')
   return fetch(YOUR_SERVER_URL, {
     method: 'POST',
     body: formData,
@@ -241,3 +288,22 @@ function upload(result: any, location: Location.LocationData, description, token
   });
 }
 
+
+
+const _getLocationAsync = async () => {
+  let { status } = await Permissions.askAsync(Permissions.LOCATION);
+  if (status !== 'granted') {
+    this.setState({
+      errorMessage: 'Permission to access location was denied',
+    });
+  }
+
+};
+
+const getPhotos = (patientId: number, token: string) => {
+  return superagent.get(`${baseUrl}/photo/view?patientId=${patientId}`).set('Authorization', 'Bearer ' + token)
+}
+const deletePhoto = (photoId: number, token: string) => {
+
+  return superagent.get(`${baseUrl}/photo/delete/${photoId}`).set('Authorization', 'Bearer ' + token)
+}

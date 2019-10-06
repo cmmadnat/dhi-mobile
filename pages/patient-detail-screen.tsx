@@ -51,7 +51,7 @@ function PatientDetailScreen({ navigation }) {
       </Card>
       <Card>
         <Text>รูปภาพ</Text>
-        <PhotoPick></PhotoPick>
+        <PhotoPick patientId={patient.id}></PhotoPick>
       </Card>
     </ScrollView>
   );
