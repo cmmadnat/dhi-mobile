@@ -2,7 +2,7 @@ import superagent from "superagent";
 import * as SecureStore from "expo-secure-store";
 import { AsyncStorage } from "react-native";
 
-const baseUrl = "http://192.168.101.39:8080";
+const baseUrl = "http://localhost:8080";
 // const baseUrl = "http://run.ict.mahidol.ac.th:443/proxy";
 export const login = (username, password) => {
   const url = `${baseUrl}/oauth/token`;

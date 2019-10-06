@@ -5,16 +5,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Alert
+  Alert,
+  Platform
 } from "react-native";
 import { Button, Icon, Image, registerCustomIconType } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
 import ImageView from "react-native-image-view";
+import * as Location from 'expo-location';
+import Constants from 'expo-constants';
+import Prompt from 'rn-prompt'
+
+
 import { getToken } from "./service/login-service";
 
-// const YOUR_SERVER_URL = "http://localhost:8080/photo/upload"
-const YOUR_SERVER_URL = "http://192.168.101.39:8080/photo/upload"
+
+const YOUR_SERVER_URL = "http://localhost:8080/photo/upload"
 
 const styles = StyleSheet.create({
   library: {
@@ -41,11 +47,37 @@ const styles = StyleSheet.create({
 const PhotoPick = () => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [promptVisible, setPromptVisible] = useState(false)
+  const [result, setResult] = useState(null)
+  const [location, setLocation] = useState(null)
+  const [token, setToken] = useState('')
+
   useEffect(() => {
+
+    const _getLocationAsync = async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        this.setState({
+          errorMessage: 'Permission to access location was denied',
+        });
+      }
+
+    };
+
     const check = async () => {
+      const tokenString = await getToken()
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       const { status: status2 } = await Permissions.askAsync(Permissions.CAMERA);
       setHasCameraPermission(status2 === "granted" && status === "granted");
+      setToken(tokenString)
+
+      if (Platform.OS === 'android' && !Constants.isDevice) {
+        this.setState({
+          errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+        });
+      } else {
+        _getLocationAsync();
+      }
     }
     check()
   });
@@ -96,7 +128,10 @@ const PhotoPick = () => {
               else if (result.cancelled === false) {
                 // ImagePicker saves the taken photo to disk and returns a local URI to it
                 const token = await getToken()
-                upload(result, token).then(data => console.log(data)).catch(e => console.error(e))
+                let location = await Location.getCurrentPositionAsync({});
+                setPromptVisible(true)
+                setResult(result)
+                setLocation(location)
               }
             }}
 
@@ -118,9 +153,15 @@ const PhotoPick = () => {
                 const { status: status2 } = await Permissions.askAsync(Permissions.CAMERA);
                 setHasCameraPermission(status2 === "granted" && status === "granted");
               }
-              ImagePicker.launchImageLibraryAsync({
+              const result = await ImagePicker.launchImageLibraryAsync({
                 allowsEditing: true
               });
+              if (!result.cancelled) {
+                let location = await Location.getCurrentPositionAsync({});
+                setPromptVisible(true)
+                setResult(result)
+                setLocation(location)
+              }
             }}
             icon={
               <Icon
@@ -157,11 +198,25 @@ const PhotoPick = () => {
           setIsImageViewVisible(false);
         }}
       />
+      <Prompt
+        title="Say something"
+        placeholder="Start typing"
+        defaultValue="Hello"
+        visible={promptVisible}
+        onCancel={() => {
+          setPromptVisible(false)
+        }}
+        onSubmit={(value) => {
+          upload(result, location, value, token).then(data => {
+            setPromptVisible(false)
+            return console.log(data);
+          }).catch(e => console.error(e))
+        }} />
     </SafeAreaView>
   );
 };
 export default PhotoPick;
-function upload(result, token) {
+function upload(result: any, location: Location.LocationData, description, token: string) {
   let localUri = result.uri;
   let filename = localUri.split('/').pop();
   // Infer the type of the image
@@ -172,9 +227,9 @@ function upload(result, token) {
   // Assume "photo" is the name of the form field the server expects
   // @ts-ignore
   formData.append('image', { uri: localUri, name: filename, type });
-  formData.append('lat', '0.00')
-  formData.append('lng', '0.00')
-  formData.append('description', '0.00')
+  formData.append('lat', location.coords.latitude + '')
+  formData.append('lng', location.coords.longitude + '')
+  formData.append('description', description)
   formData.append('patientId', '0.00')
   return fetch(YOUR_SERVER_URL, {
     method: 'POST',
