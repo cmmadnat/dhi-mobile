@@ -12,7 +12,11 @@ import {
 } from "react-native";
 import { Button, Icon, Image, registerCustomIconType } from "react-native-elements";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
+
 import * as Permissions from "expo-permissions";
+import * as Sharing from 'expo-sharing'; // Import the library
+
 import ImageView from "react-native-image-view";
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
@@ -52,20 +56,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     width,
     height: 100,
-    flexDirection: 'column',
+    flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  footerButton: {
-    flexDirection: 'row',
+  shareButton: {
+    flex: 1,
     marginLeft: 15,
-    alignSelf: 'flex-end'
+  },
+  footerButton: {
+    flex: 1,
+    marginRight: 15,
   },
   footerText: {
-    fontSize: 16,
+    fontSize: 16, flex: 2,
     color: '#FFF',
-    alignSelf: 'center'
+    textAlign: 'center'
   },
 
 });
@@ -218,30 +225,12 @@ const PhotoPick = ({ patientId }: PhotoPickProps) => {
         renderFooter={(currentImage) => {
           const title = currentImage.description
           return (<View style={styles.footer}>
+            <TouchableOpacity style={styles.shareButton} onPress={() => sharePhoto(currentImage)}>
+              <MaterialIcons name='share' size={32} color="white"></MaterialIcons>
+            </TouchableOpacity>
             <Text style={styles.footerText}>{title}</Text>
-            <TouchableOpacity style={styles.footerButton} onPress={async () => {
-              // Works on both iOS and Android
-              Alert.alert(
-                'ลบรูป',
-                'ยืนยันการลบรูป',
-                [
-                  {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'OK', onPress: async () => {
-                      setIsImageViewVisible(false)
-                      await deletePhoto(currentImage.id, token)
-                      await getPhotosCheck()
-                    }
-                  },
-                ],
-                { cancelable: false },
-              );
-            }}>
-              <MaterialIcons name='delete' size={32} color="white"></MaterialIcons>
+            <TouchableOpacity style={styles.footerButton} onPress={confirmDelete(setIsImageViewVisible, currentImage, token, getPhotosCheck)}>
+              <MaterialIcons name='delete' size={32} color="white" style={{ alignSelf: 'flex-end' }}></MaterialIcons>
             </TouchableOpacity>
           </View>);
         }}
@@ -263,6 +252,39 @@ const PhotoPick = ({ patientId }: PhotoPickProps) => {
   );
 };
 export default PhotoPick;
+const sharePhoto = (image) => {
+
+  FileSystem.downloadAsync(
+    image.source.uri,
+    FileSystem.cacheDirectory + 'small.jpg'
+  )
+    .then(({ uri }) => {
+      Sharing.shareAsync(uri)
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+function confirmDelete(setIsImageViewVisible: React.Dispatch<React.SetStateAction<boolean>>, currentImage: any, token: string, getPhotosCheck: () => Promise<void>) {
+  return async () => {
+    // Works on both iOS and Android
+    Alert.alert('ลบรูป', 'ยืนยันการลบรูป', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'OK', onPress: async () => {
+          setIsImageViewVisible(false);
+          await deletePhoto(currentImage.id, token);
+          await getPhotosCheck();
+        }
+      },
+    ], { cancelable: false });
+  };
+}
+
 function upload(result: any, location: Location.LocationData, description: string, patientId: number, token: string) {
   let localUri = result.uri;
   let filename = localUri.split('/').pop();
