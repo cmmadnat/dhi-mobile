@@ -43,7 +43,10 @@ const PickSurveyScreen = ({ navigation }) => {
     return (
       <ListItem
         onPress={() => {
-          navigation.navigate("pickSurvey2");
+          console.log(item)
+          navigation.navigate("pickSurvey2", {
+            cateId: item.Cateid
+          });
         }}
         title={item.CateName}
       />

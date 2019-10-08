@@ -27,7 +27,7 @@ export const login = (username, password) => {
 export const isLogin = async () => {
   const username = await SecureStore.getItemAsync("username");
   const password = await SecureStore.getItemAsync("password");
-  return await login("username", "password")
+  return await login(username, password)
 };
 export const logout = async () => {
   await SecureStore.deleteItemAsync("username");

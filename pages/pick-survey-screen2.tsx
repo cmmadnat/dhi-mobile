@@ -17,7 +17,8 @@ const PickSurveyScreen2 = ({ navigation }) => {
   const [initialList, setInitialList] = useState([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
-    const url = getUrl(28);
+    const cateId = navigation.getParam('cateId', 28)
+    const url = getUrl(cateId);
     if (initialList.length === 0)
       superagent
         .get(url)
