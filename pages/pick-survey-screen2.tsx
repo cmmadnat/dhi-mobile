@@ -44,7 +44,7 @@ const PickSurveyScreen2 = ({ navigation }) => {
     return (
       <ListItem
         onPress={() => {
-          navigation.navigate("showSurvey");
+          navigation.navigate("showSurvey", { surveyId: item.id });
         }}
         title={item.name}
       />

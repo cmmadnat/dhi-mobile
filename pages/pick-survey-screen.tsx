@@ -43,7 +43,6 @@ const PickSurveyScreen = ({ navigation }) => {
     return (
       <ListItem
         onPress={() => {
-          console.log(item)
           navigation.navigate("pickSurvey2", {
             cateId: item.Cateid
           });
