@@ -3,6 +3,10 @@ import { getHeaderInset } from "../components/header-inset";
 import { WebView } from 'react-native-webview';
 import { NavigationScreenProps, NavigationScreenProp, NavigationRoute, NavigationParams } from "react-navigation";
 import superagent from 'superagent'
+import { upload } from "../components/service/upload-service";
+import { getToken } from "../components/service/login-service";
+import { getCurrentPatient } from "../components/service/patient-service";
+import { KeyboardAvoidingView } from "react-native";
 export interface IAppShowSurveyScreenProps {
   navigation: NavigationScreenProp<NavigationRoute<NavigationParams>, NavigationParams>;
 }
@@ -17,8 +21,8 @@ export default function AppShowSurveyScreen({ navigation }: IAppShowSurveyScreen
 <html>
     <head>
         <title>NPS survey with follow-up questions, jQuery Survey Library Example</title>
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://unpkg.com/jquery"></script>
         <script src="https://surveyjs.azureedge.net/1.1.14/survey.jquery.js"></script>
         <link href="https://surveyjs.azureedge.net/1.1.14/survey.css" type="text/css" rel="stylesheet"/>
@@ -47,7 +51,7 @@ export default function AppShowSurveyScreen({ navigation }: IAppShowSurveyScreen
       survey
             .onComplete
             .add(function (result) {
-                window.ReactNativeWebView.postMessage(result);
+                window.ReactNativeWebView.postMessage(JSON.stringify(result));
 
             });
         $("#surveyElement").Survey({model: survey});
@@ -65,15 +69,27 @@ export default function AppShowSurveyScreen({ navigation }: IAppShowSurveyScreen
     }
   })
   return (
-    <WebView
-      ref={webRef}
-      style={{ flex: 1 }}
-      {...getHeaderInset()}
-      scrollEnabled
-      source={{ html: html }}
-      onMessage={event => {
-        alert(event.nativeEvent.data);
-      }}
-    />
+    <KeyboardAvoidingView style={{ flex: 1, display: 'flex' }} behavior="padding" enabled>
+      <WebView
+        ref={webRef}
+        style={{ flex: 1 }}
+        {...getHeaderInset()}
+        scrollEnabled
+        source={{ html: html }}
+        onMessage={async event => {
+          // alert(event.nativeEvent.data);
+          const data = event.nativeEvent.data
+          const token = await getToken()
+          const patient = await getCurrentPatient()
+          const patientId = patient.id
+          upload(token, data, patientId, surveyId).then(() => {
+            alert('บันทึกเรียบร้อย')
+            navigation.goBack()
+          }).catch(e => {
+            alert('เกิดข้อผิดพลาด')
+          })
+        }}
+      />
+    </KeyboardAvoidingView>
   );
 }
