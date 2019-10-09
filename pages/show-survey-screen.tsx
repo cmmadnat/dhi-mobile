@@ -51,7 +51,7 @@ export default function AppShowSurveyScreen({ navigation }: IAppShowSurveyScreen
       survey
             .onComplete
             .add(function (result) {
-                window.ReactNativeWebView.postMessage(JSON.stringify(result));
+                window.ReactNativeWebView.postMessage(JSON.stringify(result.data));
 
             });
         $("#surveyElement").Survey({model: survey});
