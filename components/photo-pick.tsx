@@ -102,7 +102,7 @@ const PhotoPick = ({ patientId }: PhotoPickProps) => {
       })
       setPhotos(p)
     }
-    ).catch(e => console.error(e))
+    ).catch(e => { })
   }
   useEffect(() => {
 

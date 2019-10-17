@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { ScrollView } from "react-native";
 import { Card, ListItem, Text } from "react-native-elements";
+import PatientLocation from '../components/patient-location'
 import { getHeaderInset } from "../components/header-inset";
 import AppBackground from "../components/background-component";
 import {
@@ -48,7 +49,7 @@ function PatientDetailScreen({ navigation }) {
         <ListItem title={"อำเภอ"} subtitle={patient.AMPHUR_NAME} />
         <ListItem title={"จังหวัด"} subtitle={patient.PROVINCE_NAME} />
         <ListItem title={"รหัสไปรษณีย์"} subtitle={patient.POSTCODE} />
-        
+        <PatientLocation location={null} navigation={navigation}></PatientLocation>
       </Card>
       <Card>
         <Text>รูปภาพ</Text>
