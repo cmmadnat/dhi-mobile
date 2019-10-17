@@ -3,7 +3,6 @@ import * as SecureStore from "expo-secure-store";
 import { AsyncStorage } from "react-native";
 import { baseUrl } from "./constant";
 
-// export const baseUrl = "http://localhost:8080";
 export const login = (username, password) => {
   const url = `${baseUrl}/oauth/token`;
   return superagent

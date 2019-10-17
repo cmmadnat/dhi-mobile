@@ -16,7 +16,7 @@ import AppPatientScreen from "./pages/patient-detail-screen";
 import PickSurveyScreen from "./pages/pick-survey-screen";
 import PickSurveyScreen2 from "./pages/pick-survey-screen2";
 import ShowSurvey from "./pages/show-survey-screen";
-import { isLogin } from "./components/service/login-service";
+import PickLocationScreen from './pages/pick-survey-screen'
 import { YellowBox } from "react-native";
 
 YellowBox.ignoreWarnings([
@@ -29,7 +29,8 @@ const surveyStack = createStackNavigator(
     patientDetail: { screen: AppPatientScreen },
     pickSurvey: { screen: PickSurveyScreen },
     pickSurvey2: { screen: PickSurveyScreen2 },
-    showSurvey: { screen: ShowSurvey }
+    showSurvey: { screen: ShowSurvey },
+    pickLocation: { screen: PickLocationScreen }
   },
   {
     defaultNavigationOptions: {

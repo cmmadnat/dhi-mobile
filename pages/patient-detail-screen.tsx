@@ -41,13 +41,14 @@ function PatientDetailScreen({ navigation }) {
           subtitle={patient.DOB + " (" + patient.Age + " ปี)"}
         />
       </Card>
-      <Card title="ข้อมูลทั่วไป">
+      <Card title="ที่อยู่">
         <ListItem title={"บ้านเลขที่"} subtitle={patient.housenumber} />
         <ListItem title={"หมู่"} subtitle={patient.moo} />
         <ListItem title={"ตำบล"} subtitle={patient.DISTRICT_NAME} />
         <ListItem title={"อำเภอ"} subtitle={patient.AMPHUR_NAME} />
         <ListItem title={"จังหวัด"} subtitle={patient.PROVINCE_NAME} />
         <ListItem title={"รหัสไปรษณีย์"} subtitle={patient.POSTCODE} />
+        
       </Card>
       <Card>
         <Text>รูปภาพ</Text>
