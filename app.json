@@ -19,7 +19,12 @@
     "assetBundlePatterns": ["**/*"],
     "android": {
       "package": "com.mahidol.ict.dhi",
-      "versionCode": 1
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDCFd0UPf9YWiWYwfP0Vh8TayBiGIRWXYY"
+        }
+      }
     },
     "ios": {
       "supportsTablet": true
