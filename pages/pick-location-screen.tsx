@@ -3,6 +3,10 @@ import MapView, { MapEvent, Marker } from 'react-native-maps';
 import { StyleSheet, View, Dimensions, Button } from 'react-native';
 import { Text } from 'react-native-elements'
 import { NavigationStackProp } from 'react-navigation-stack';
+import superagent from 'superagent'
+import { getCurrentPatient } from '../components/service/patient-service';
+import { getToken } from '../components/service/login-service';
+import { baseUrl } from '../components/service/constant';
 
 
 const PickLocationScreen =
@@ -35,15 +39,30 @@ const PickLocationScreen =
 PickLocationScreen.navigationOptions = ({ navigation }) => ({
   headerRight: (
     <Button
-      onPress={() => {
+      onPress={async () => {
         const lat = navigation.getParam('lat')
         const lng = navigation.getParam('lng')
-        alert('lat' + lat + 'lng' + lng)
+
+        setLocation(lat, lng).then(() => {
+          alert('บันทึกตำแหน่งบ้านคนไข้เรียบร้อย')
+          navigation.goBack()
+        })
       }}
       title="บันทึก"
     />
   )
 })
+const setLocation = async (lat: number, lng: number) => {
+
+  const patient = await getCurrentPatient();
+  const token = await getToken()
+  const patientId = patient.id
+  return superagent.post(`${baseUrl}/location/${patientId}`).type('form').send({
+    lat: lat, lng: lng
+  }).set('Authorization', 'Bearer ' + token).then(data => {
+    return alert(JSON.stringify(data));
+  }).catch(e => console.error(e))
+}
 
 
 const styles = StyleSheet.create({

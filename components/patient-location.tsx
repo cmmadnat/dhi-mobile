@@ -6,10 +6,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import { NavigationStackProp } from 'react-navigation-stack';
 
 
-interface LatLng {
+export interface LatLng {
   lat: number; lng: number;
 }
-interface PatientLocationProps {
+export interface PatientLocationProps {
   location?: LatLng
   navigation: NavigationStackProp;
 }
