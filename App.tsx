@@ -18,6 +18,7 @@ import PickSurveyScreen2 from "./pages/pick-survey-screen2";
 import ShowSurvey from "./pages/show-survey-screen";
 import PickLocationScreen from './pages/pick-location-screen'
 import { YellowBox } from "react-native";
+import { connectActionSheet, ActionSheetProvider } from '@expo/react-native-action-sheet'
 
 YellowBox.ignoreWarnings([
   "ReactNative.NativeModules.LottieAnimationView.getConstants"
@@ -75,4 +76,15 @@ const switchNavigator = createSwitchNavigator(
   }
 );
 
-export default createAppContainer(switchNavigator);
+const App = createAppContainer(switchNavigator);
+
+class AppContainer extends React.Component {
+  render() {
+    return (
+      <ActionSheetProvider>
+        <App />
+      </ActionSheetProvider>
+    );
+  }
+}
+export default AppContainer
