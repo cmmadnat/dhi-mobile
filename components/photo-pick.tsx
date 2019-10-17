@@ -20,6 +20,8 @@ import * as Sharing from 'expo-sharing'; // Import the library
 import ImageView from "react-native-image-view";
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
+import * as ImageManipulator from 'expo-image-manipulator';
+
 import Prompt from 'rn-prompt'
 import superagent from 'superagent'
 
@@ -247,7 +249,9 @@ const PhotoPick = ({ patientId }: PhotoPickProps) => {
           setPromptVisible(false)
           upload(result, location, value, patientId, token).then(data => {
             getPhotosCheck()
-          }).then().catch(e => console.error(e))
+          }).then().catch(e => {
+            return console.error(e);
+          })
         }} />
     </SafeAreaView>
   );
@@ -286,7 +290,7 @@ function confirmDelete(setIsImageViewVisible: React.Dispatch<React.SetStateActio
   };
 }
 
-function upload(result: any, location: Location.LocationData, description: string, patientId: number, token: string) {
+async function upload(result: any, location: Location.LocationData, description: string, patientId: number, token: string) {
   let localUri = result.uri;
   let filename = localUri.split('/').pop();
   // Infer the type of the image
@@ -295,8 +299,12 @@ function upload(result: any, location: Location.LocationData, description: strin
   // Upload the image using the fetch and FormData APIs
   let formData = new FormData();
   // Assume "photo" is the name of the form field the server expects
+
+
+  const newPhoto = await ImageManipulator.manipulateAsync(localUri,
+    [{ resize: { width: 800 } }], { compress: 1.0 })
   // @ts-ignore
-  formData.append('image', { uri: localUri, name: filename, type });
+  formData.append('image', { uri: newPhoto.uri, name: filename, type });
   formData.append('lat', location.coords.latitude + '')
   formData.append('lng', location.coords.longitude + '')
   formData.append('description', description)
