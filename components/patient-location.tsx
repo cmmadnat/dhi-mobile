@@ -24,7 +24,7 @@ const PatientLocation = ({ reload, location, navigation }: PatientLocationProps)
     }} />
     {
       location &&
-      <MapView style={styles.mapStyle} region={{
+      <MapView showsUserLocation={true} style={styles.mapStyle} region={{
         latitude: location.lat, longitude: location.lng, latitudeDelta: 2,
         longitudeDelta: 2,
       }}>

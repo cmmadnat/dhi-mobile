@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import MapView, { MapEvent, Marker } from 'react-native-maps';
-import { StyleSheet, View, Dimensions, Button, SafeAreaView } from 'react-native';
-import { Text } from 'react-native-elements'
+import { StyleSheet, View, Dimensions, Button, SafeAreaView, Linking, Share } from 'react-native';
+import { Text, Button as ElementButton } from 'react-native-elements'
 import { NavigationStackProp } from 'react-navigation-stack';
 import superagent from 'superagent'
 import { getCurrentPatient } from '../components/service/patient-service';
 import { getToken } from '../components/service/login-service';
 import { baseUrl } from '../components/service/constant';
 import { useActionSheet } from '@expo/react-native-action-sheet'
+import { FontAwesome } from '@expo/vector-icons';
 
 const PickLocationScreen =
   ({ navigation }: { navigation: NavigationStackProp }) => {
@@ -17,18 +18,20 @@ const PickLocationScreen =
 
     const _onOpenActionSheet = () => {
       // Same interface as https://facebook.github.io/react-native/docs/actionsheetios.html
-      const options = ['Delete', 'Save', 'Cancel'];
-      const destructiveButtonIndex = 0;
+      const options = ['คัดลอกตำแหน่ง', 'เปิดด้วย Google Map', 'ยกเลิก'];
       const cancelButtonIndex = 2;
 
       showActionSheetWithOptions(
         {
           options,
           cancelButtonIndex,
-          destructiveButtonIndex,
         },
         buttonIndex => {
           // Do something here depending on the button index selected
+          switch (buttonIndex) {
+            case 0: Share.share({ message: `ตำแหน่งบ้านคนไข้ ที่ ${lat},${lng}` }); break;
+            case 1: Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`)
+          }
         },
       );
     };
@@ -51,7 +54,9 @@ const PickLocationScreen =
         </MapView>
         <View style={{ height: 40, position: 'absolute', bottom: 40, alignItems: 'center', left: 0, right: 0, display: 'flex' }}>
           <Text style={{ backgroundColor: 'white', textAlign: 'center', width: 300 }}>กรุณากดค้างบนแผนที่บนตำแหน่งของบ้านคนไข้และกดบันทึกด้านขวาบนเพื่อบันทึก</Text>
-          <Button title='hello' onPress={_onOpenActionSheet}></Button>
+        </View>
+        <View style={{ height: 40, position: 'absolute', top: 100, alignItems: 'center', left: 0, right: 0, display: 'flex' }}>
+          <ElementButton title='แชร์ที่อยู่หรือนำทาง' icon={<FontAwesome size={16} color={'white'} name='map' style={{ marginRight: 5 }}></FontAwesome>} onPress={_onOpenActionSheet}></ElementButton>
         </View>
       </SafeAreaView>
     );

@@ -24,8 +24,9 @@ import Prompt from 'rn-prompt'
 import superagent from 'superagent'
 
 
-import { getToken, baseUrl } from "./service/login-service";
+import { getToken, } from "./service/login-service";
 import { MaterialIcons } from "@expo/vector-icons";
+import { baseUrl } from "./service/constant";
 const { width } = Dimensions.get('window');
 
 
