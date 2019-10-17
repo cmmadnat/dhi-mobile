@@ -23,30 +23,29 @@ export interface PickSurveyScreenProps {
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 const getLocation = (patientId: number, token: string) => {
-  return superagent.get(`${baseUrl}/location/${patientId}`).set('Authorization', 'Bearer ' + token)
+  return superagent.get(`${baseUrl}/location/${patientId}`).set('Authorization', 'Bearer ' + token).catch(e => console.error(e))
 }
 
 function PatientDetailScreen({ navigation }) {
   const LOADING = "loading...";
   const [patient, setPatient] = useState({ Name: LOADING } as Patient);
   const [location, setLocation] = useState(null)
+  const [locationLoaded, setLocationLoaded] = useState(false)
   useEffect(() => {
     if (patient.Name === LOADING) getCurrentPatient().then(p => setPatient(p));
   });
   useEffect(() => {
     const getLocationAsync = async () => {
-
-      if (patient.Name !== LOADING) {
-        const token = await getToken()
-        const l = (await getLocation(patient.id, token)).body as LatLng
-        console.log(l)
-        if (l) {
-          setLocation({ lat: l.lat, lng: l.lng })
-        }
+      const token = await getToken()
+      const l = (await getLocation(patient.id, token)).body as LatLng
+      if (l) {
+        setLocation({ lat: l.lat, lng: l.lng })
       }
-
     }
-    getLocationAsync()
+    if (!locationLoaded && patient.Name !== LOADING) {
+      setLocationLoaded(true)
+      getLocationAsync()
+    }
   })
   return (
     <ScrollView style={{ flex: 1 }} {...getHeaderInset()}>
@@ -71,7 +70,7 @@ function PatientDetailScreen({ navigation }) {
         <ListItem title={"อำเภอ"} subtitle={patient.AMPHUR_NAME} />
         <ListItem title={"จังหวัด"} subtitle={patient.PROVINCE_NAME} />
         <ListItem title={"รหัสไปรษณีย์"} subtitle={patient.POSTCODE} />
-        <PatientLocation location={null} navigation={navigation}></PatientLocation>
+        <PatientLocation reload={() => { setLocationLoaded(false) }} location={location ? { lat: location.lat, lng: location.lng } : null} navigation={navigation}></PatientLocation>
       </Card>
       <Card>
         <Text>รูปภาพ</Text>

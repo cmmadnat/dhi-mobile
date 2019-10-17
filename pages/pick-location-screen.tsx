@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MapView, { MapEvent, Marker } from 'react-native-maps';
-import { StyleSheet, View, Dimensions, Button } from 'react-native';
+import { StyleSheet, View, Dimensions, Button, SafeAreaView } from 'react-native';
 import { Text } from 'react-native-elements'
 import { NavigationStackProp } from 'react-navigation-stack';
 import superagent from 'superagent'
@@ -11,11 +11,11 @@ import { baseUrl } from '../components/service/constant';
 
 const PickLocationScreen =
   ({ navigation }: { navigation: NavigationStackProp }) => {
-    const [lat, setLat] = useState(0.0)
-    const [lng, setLng] = useState(0.0)
+    const [lat, setLat] = useState(navigation.getParam('lat'))
+    const [lng, setLng] = useState(navigation.getParam('lng'))
 
     return (
-      <View style={styles.container} >
+      <SafeAreaView style={styles.container} >
         <MapView style={styles.mapStyle} onLongPress={(e: MapEvent) => {
           const coordinate = e.nativeEvent.coordinate;
           setLat(coordinate.latitude)
@@ -25,7 +25,7 @@ const PickLocationScreen =
           navigation.setParams({ lng: coordinate.longitude })
         }} >
           {
-            lat !== 0.0 && lng !== 0.0 &&
+            lat !== null && lng !== null &&
             <Marker coordinate={{ latitude: lat, longitude: lng }}
               title="ตำแหน่งบ้านคนไข้" ></Marker>
           }
@@ -33,7 +33,7 @@ const PickLocationScreen =
         <View style={{ height: 40, position: 'absolute', bottom: 40, alignItems: 'center', left: 0, right: 0, display: 'flex' }}>
           <Text style={{ backgroundColor: 'white', textAlign: 'center', width: 300 }}>กรุณากดค้างบนแผนที่บนตำแหน่งของบ้านคนไข้และกดบันทึกด้านขวาบนเพื่อบันทึก</Text>
         </View>
-      </View >
+      </SafeAreaView>
     );
   }
 PickLocationScreen.navigationOptions = ({ navigation }) => ({
@@ -42,9 +42,11 @@ PickLocationScreen.navigationOptions = ({ navigation }) => ({
       onPress={async () => {
         const lat = navigation.getParam('lat')
         const lng = navigation.getParam('lng')
+        const reload = navigation.getParam('reload')
 
         setLocation(lat, lng).then(() => {
           alert('บันทึกตำแหน่งบ้านคนไข้เรียบร้อย')
+          reload()
           navigation.goBack()
         })
       }}
@@ -59,9 +61,7 @@ const setLocation = async (lat: number, lng: number) => {
   const patientId = patient.id
   return superagent.post(`${baseUrl}/location/${patientId}`).type('form').send({
     lat: lat, lng: lng
-  }).set('Authorization', 'Bearer ' + token).then(data => {
-    return alert(JSON.stringify(data));
-  }).catch(e => console.error(e))
+  }).set('Authorization', 'Bearer ' + token)
 }
 
 

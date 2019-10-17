@@ -12,15 +12,22 @@ export interface LatLng {
 export interface PatientLocationProps {
   location?: LatLng
   navigation: NavigationStackProp;
+  reload: () => void
 }
-const PatientLocation = ({ location, navigation }: PatientLocationProps) => {
+const PatientLocation = ({ reload, location, navigation }: PatientLocationProps) => {
   return (<View>
     <Button title='ดูตำแหน่งบ้าน' icon={<FontAwesome name='map-marker' size={18} style={{ marginRight: 5 }} color='white' />} onPress={() => {
-      navigation.navigate('pickLocation');
+      navigation.navigate('pickLocation', {
+        reload,
+        lat: (location ? location.lat : null), lng: (location ? location.lng : null)
+      });
     }} />
     {
       location &&
-      <MapView style={styles.mapStyle}>
+      <MapView style={styles.mapStyle} region={{
+        latitude: location.lat, longitude: location.lng, latitudeDelta: 2,
+        longitudeDelta: 2,
+      }}>
         <Marker
           coordinate={{ latitude: location.lat, longitude: location.lng }}
           title={"บ้านคนไข้"}
